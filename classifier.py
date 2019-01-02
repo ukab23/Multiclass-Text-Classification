@@ -16,23 +16,25 @@ from many_stop_words import get_stop_words
 from nltk.tokenize import wordpunct_tokenize
 from pprint import pprint
 from sklearn.externals import joblib
+from datetime import datetime
 
 
 class Classifier():
     def __init__(self):
         # self.labels = list(filter(lambda x: not (x.endswith("~") or x.startswith("client")), os.listdir("./classifier/command_classifier/data/")))
-        self.labels = [  
+        self.labels = [
                          "date.txt",
                          "day.txt",
                          "time.txt",
-                         
+
         ]
+        self.weekdays = { 0:'Monday', 1:'Tuesday', 2:'Wednesday', 3:'Thursday', 4:'Friday', 5:'Saturday', 6:'Sunday' }
         # print(self.labels)
         self.vectorizer = TfidfVectorizer( max_features = None, strip_accents = 'unicode',
                             analyzer = "word", ngram_range=(1,1), use_idf = 1, smooth_idf = 1, stop_words='english')
         self.model_folder = "./classifier/command_classifier/models"
         self.model_path = self.model_folder+"/command_classifier.joblib"
-        
+
 
         xdata = []
         ydata = []
@@ -64,6 +66,12 @@ class Classifier():
         # classifier_result =  [confident_on, confused_on] if (with_confidence - with_confusion) < .05 else [confident_on]
         # print dict(zip([confident_on, confused_on], [with_confidence,with_confusion])) , classifier_result
         print (classifier_result)
+        if(classifier_result["class"] == 'date'):
+            print(datetime.date(datetime.now()))
+        if(classifier_result["class"] == 'day'):
+            print(self.weekdays[datetime.today().weekday()])
+        if(classifier_result["class"] == 'time'):
+            print(datetime.time(datetime.now()))
         return classifier_result
 
 if __name__ == '__main__':
