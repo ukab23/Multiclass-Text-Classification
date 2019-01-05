@@ -67,11 +67,11 @@ class Classifier():
         # print dict(zip([confident_on, confused_on], [with_confidence,with_confusion])) , classifier_result
         print (classifier_result)
         if(classifier_result["class"] == 'date'):
-            print(datetime.date(datetime.now()))
+            print("Date is",datetime.date(datetime.now()))
         if(classifier_result["class"] == 'day'):
-            print(self.weekdays[datetime.today().weekday()])
+            print("It is",self.weekdays[datetime.today().weekday()])
         if(classifier_result["class"] == 'time'):
-            print(datetime.time(datetime.now()))
+            print("Current time is",datetime.time(datetime.now()))
         return classifier_result
 
 if __name__ == '__main__':
