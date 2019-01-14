@@ -1,21 +1,10 @@
-import re
-import os
-import sys
-import glob
-import json
-import string
-import numpy as np
 import nltk
-import pickle
-import dill
 import sklearn
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
 from many_stop_words import get_stop_words
 from nltk.tokenize import wordpunct_tokenize
-from pprint import pprint
-from sklearn.externals import joblib
 from datetime import datetime
 from gtts import gTTS
 import pyglet
@@ -62,7 +51,7 @@ class Classifier():
         classifier_result["class"] = self.labels[max_ind][:-4]
         classifier_result["prediction"] = {self.labels[max_ind]: round(max(predp)*100.0, 2)*0.6}
         
-        # print(classifier_result)
+        
         if(classifier_result["class"] == 'date'):
             print("Date is",datetime.date(datetime.now()))
             speak_date = datetime.date(datetime.now()).strftime('%m/%d/%Y')
@@ -71,6 +60,7 @@ class Classifier():
             music = pyglet.resource.media('speak_date.mp3')
             music.play()
             pyglet.app.run()
+            
         if(classifier_result["class"] == 'day'):
             print("It is",self.weekdays[datetime.today().weekday()])
             speak_day = self.weekdays[datetime.today().weekday()]
@@ -79,6 +69,7 @@ class Classifier():
             music = pyglet.resource.media('speak_day.mp3')
             music.play()
             pyglet.app.run()
+            
         if(classifier_result["class"] == 'time'):
             print("Current time is",datetime.time(datetime.now()))
             speak_time = datetime.date(datetime.now())
