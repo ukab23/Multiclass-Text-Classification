@@ -17,7 +17,8 @@ from nltk.tokenize import wordpunct_tokenize
 from pprint import pprint
 from sklearn.externals import joblib
 from datetime import datetime
-
+from gtts import gTTS
+import pyglet
 
 class Classifier():
     def __init__(self):
@@ -29,7 +30,6 @@ class Classifier():
 
         ]
         self.weekdays = { 0:'Monday', 1:'Tuesday', 2:'Wednesday', 3:'Thursday', 4:'Friday', 5:'Saturday', 6:'Sunday' }
-        # print(self.labels)
         self.vectorizer = TfidfVectorizer( max_features = None, strip_accents = 'unicode',
                             analyzer = "word", ngram_range=(1,1), use_idf = 1, smooth_idf = 1, stop_words='english')
         self.model_folder = "./classifier/command_classifier/models"
@@ -51,7 +51,7 @@ class Classifier():
         vectors_train = self.vectorizer.fit_transform(xdata)
         self.classifier = OneVsRestClassifier( LogisticRegression( C = 10.0, multi_class = "multinomial", solver = "lbfgs" ) )
         self.classifier.fit(vectors_train, ydata)
-        # print("logostic classifier accuracy=====>",self.classifier.score(vectors_train, ydata))
+        
     def test(self, query):
         classifier_result = {}
         vectors_test = self.vectorizer.transform([query])
@@ -61,17 +61,33 @@ class Classifier():
         max_ind =  predp.index(max(predp))
         classifier_result["class"] = self.labels[max_ind][:-4]
         classifier_result["prediction"] = {self.labels[max_ind]: round(max(predp)*100.0, 2)*0.6}
-        # with_confidence,with_confusion = max(predp),max(filter(lambda n:n != max(predp),predp))
-        # confident_on,confused_on = modifier_dict[self.labels[predp.index(with_confidence)]],modifier_dict[self.labels[predp.index(with_confusion)]]
-        # classifier_result =  [confident_on, confused_on] if (with_confidence - with_confusion) < .05 else [confident_on]
-        # print dict(zip([confident_on, confused_on], [with_confidence,with_confusion])) , classifier_result
-        print (classifier_result)
+        
+        # print(classifier_result)
         if(classifier_result["class"] == 'date'):
             print("Date is",datetime.date(datetime.now()))
+            speak_date = datetime.date(datetime.now()).strftime('%m/%d/%Y')
+            tts = gTTS(text='The date is' + speak_date, lang='en')
+            tts.save("speak_date.mp3")
+            music = pyglet.resource.media('speak_date.mp3')
+            music.play()
+            pyglet.app.run()
         if(classifier_result["class"] == 'day'):
             print("It is",self.weekdays[datetime.today().weekday()])
+            speak_day = self.weekdays[datetime.today().weekday()]
+            tts = gTTS(text='It is' + speak_day, lang='en')
+            tts.save("speak_day.mp3")
+            music = pyglet.resource.media('speak_day.mp3')
+            music.play()
+            pyglet.app.run()
         if(classifier_result["class"] == 'time'):
             print("Current time is",datetime.time(datetime.now()))
+            speak_time = datetime.date(datetime.now())
+            speak_time = speak_time.strftime('%I:%M')
+            tts = gTTS(text='Current time is' + speak_time, lang='en')
+            tts.save("speak_time.mp3")
+            music = pyglet.resource.media('speak_time.mp3')
+            music.play()
+            pyglet.app.run()
         return classifier_result
 
 if __name__ == '__main__':
