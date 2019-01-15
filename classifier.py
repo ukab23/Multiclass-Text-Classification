@@ -1,3 +1,4 @@
+import re
 import nltk
 import sklearn
 from sklearn.multiclass import OneVsRestClassifier
@@ -41,6 +42,13 @@ class Classifier():
         self.classifier = OneVsRestClassifier( LogisticRegression( C = 10.0, multi_class = "multinomial", solver = "lbfgs" ) )
         self.classifier.fit(vectors_train, ydata)
         
+    def text_to_speech(self, speak):
+        tts = gTTS(text='It is' + speak, lang='en')
+        tts.save("speak.mp3")
+        music = pyglet.resource.media('speak.mp3')
+        music.play()
+        pyglet.app.run()
+
     def test(self, query):
         classifier_result = {}
         vectors_test = self.vectorizer.transform([query])
@@ -51,34 +59,23 @@ class Classifier():
         classifier_result["class"] = self.labels[max_ind][:-4]
         classifier_result["prediction"] = {self.labels[max_ind]: round(max(predp)*100.0, 2)*0.6}
         
-        
+        # print(classifier_result)
         if(classifier_result["class"] == 'date'):
             print("Date is",datetime.date(datetime.now()))
             speak_date = datetime.date(datetime.now()).strftime('%m/%d/%Y')
-            tts = gTTS(text='The date is' + speak_date, lang='en')
-            tts.save("speak_date.mp3")
-            music = pyglet.resource.media('speak_date.mp3')
-            music.play()
-            pyglet.app.run()
-            
+            self.text_to_speech(speak_date)
+
         if(classifier_result["class"] == 'day'):
             print("It is",self.weekdays[datetime.today().weekday()])
             speak_day = self.weekdays[datetime.today().weekday()]
-            tts = gTTS(text='It is' + speak_day, lang='en')
-            tts.save("speak_day.mp3")
-            music = pyglet.resource.media('speak_day.mp3')
-            music.play()
-            pyglet.app.run()
-            
+            self.text_to_speech(speak_day)
+
         if(classifier_result["class"] == 'time'):
             print("Current time is",datetime.time(datetime.now()))
             speak_time = datetime.date(datetime.now())
             speak_time = speak_time.strftime('%I:%M')
-            tts = gTTS(text='Current time is' + speak_time, lang='en')
-            tts.save("speak_time.mp3")
-            music = pyglet.resource.media('speak_time.mp3')
-            music.play()
-            pyglet.app.run()
+            self.text_to_speech(speak_time)
+
         return classifier_result
 
 if __name__ == '__main__':
@@ -86,3 +83,4 @@ if __name__ == '__main__':
             result = Classifier()
             qr = input("=>")
             result.test(qr)
+
